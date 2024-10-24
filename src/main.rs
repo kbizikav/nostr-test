@@ -1,3 +1,4 @@
+use dialoguer::Input;
 use nostr_sdk::prelude::*;
 use utils::load_keys_from_env;
 
@@ -19,6 +20,11 @@ async fn main() -> anyhow::Result<()> {
     client.add_read_relay("wss://relay.nostr.info").await?;
     client.connect().await;
 
-    client.publish_text_note("hello", []).await?;
-    Ok(())
+    loop {
+        let input: String = Input::new()
+            .with_prompt("message?")
+            .interact_text()
+            .unwrap();
+        client.publish_text_note(&input, []).await?;
+    }
 }
